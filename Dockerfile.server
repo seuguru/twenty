@@ -1,1 +1,1 @@
-ROM twentycrm/twenty-front:latest
+FROM twentycrm/twenty-front:latest

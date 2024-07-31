@@ -1,0 +1,17 @@
+setup:
+  addons:
+    - plan: heroku-postgresql:hobby-dev
+      as: DATABASE
+
+build:
+  docker:
+    web: Dockerfile.web
+    server: Dockerfile.server
+
+release:
+  command:
+    - ./scripts/render-run.sh
+
+run:
+  web: docker run -e REACT_APP_SERVER_BASE_URL=$(heroku config:get RENDER_EXTERNAL_URL --app gurupass-crm) twentycrm/twenty-front:latest
+  server: docker run -e FRONT_BASE_URL=$(heroku config:get RENDER_EXTERNAL_URL --app gurupass-crm) -e ACCESS_TOKEN_SECRET=$(heroku config:get ACCESS_TOKEN_SECRET --app gurupass-crm) -e LOGIN_TOKEN_SECRET=$(heroku config:get LOGIN_TOKEN_SECRET --app gurupass-crm) -e REFRESH_TOKEN_SECRET=$(heroku config:get REFRESH_TOKEN_SECRET --app gurupass-crm) -e FILE_TOKEN_SECRET=$(heroku config:get FILE_TOKEN_SECRET --app gurupass-crm) -e PG_DATABASE_HOST=$(heroku config:get PG_DATABASE_HOST --app gurupass-crm) -e PG_DATABASE_PORT=$(heroku config:get PG_DATABASE_PORT --app gurupass-crm) -v /path/to/local-storage:/.local-storage twentycrm/twenty-server:latest sh -c ./scripts/render-run.sh
